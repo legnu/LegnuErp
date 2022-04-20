@@ -8,6 +8,7 @@ import br.com.legnu.controller.ModuloConexao;
 import javax.swing.JOptionPane;
 import java.sql.*;
 
+
 /**
  *
  * @author Ad3ln0r
@@ -33,13 +34,13 @@ public class cadUsuarios extends javax.swing.JFrame {
     
     private void limpar() {
         tbUsuario.setText(null);
-        tbCargo.setText(null);
+      
         tbSenha.setText(null);
         tbId.setText(null);
         btnRemover.setEnabled(false);
         btnEditar.setEnabled(false);
         btnAdicionar.setEnabled(true);
-        btnPesquisar.setEnabled(true);
+       
     }
 
     private void consultar() {
@@ -51,7 +52,7 @@ public class cadUsuarios extends javax.swing.JFrame {
             if (rs.next()) {
                 tbUsuario.setText(rs.getString(3));
                 tbSenha.setText(rs.getString(4));
-                tbCargo.setText(rs.getString(2));
+               
                 btnRemover.setEnabled(true);
                 btnEditar.setEnabled(true);
                 btnAdicionar.setEnabled(false);
@@ -74,12 +75,12 @@ public class cadUsuarios extends javax.swing.JFrame {
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, tbId.getText());
-            pst.setString(2, tbCargo.getText());
+            
             pst.setString(3, tbUsuario.getText());
             pst.setString(4, tbSenha.getText());
 
             //Validação dos Campos Obrigatorios
-            if ((tbUsuario.getText().isEmpty()) || (tbCargo.getText().isEmpty()) || (tbSenha.getText().isEmpty())) {
+            if ((tbUsuario.getText().isEmpty()) || (tbSenha.getText().isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatorios");
             } else {
 
@@ -102,12 +103,12 @@ public class cadUsuarios extends javax.swing.JFrame {
         try {
             pst = conexao.prepareStatement(sql);
 
-            pst.setString(1, tbCargo.getText());
+      
             pst.setString(2, tbUsuario.getText());
             pst.setString(3, tbSenha.getText());
             pst.setString(4, tbId.getText());
 
-            if ((tbCargo.getText().isEmpty()) || (tbUsuario.getText().isEmpty()) || (tbSenha.getText().isEmpty())) {
+            if ((tbUsuario.getText().isEmpty()) || (tbSenha.getText().isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatorios");
             } else {
 
@@ -161,36 +162,46 @@ public class cadUsuarios extends javax.swing.JFrame {
         lblSenha = new javax.swing.JLabel();
         lblCargo = new javax.swing.JLabel();
         btnAdicionar = new javax.swing.JButton();
-        btnPesquisar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnRemover = new javax.swing.JButton();
-        btnLogo = new javax.swing.JButton();
         btnRestaurar = new javax.swing.JButton();
         tbId = new javax.swing.JTextField();
         tbUsuario = new javax.swing.JTextField();
         tbSenha = new javax.swing.JTextField();
-        tbCargo = new javax.swing.JTextField();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
         lblFundo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cadastro de Usuarios");
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        lblId.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblId.setForeground(new java.awt.Color(204, 204, 204));
-        lblId.setText("* Id");
-        getContentPane().add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
+        lblId.setText("*Id:");
+        getContentPane().add(lblId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
+        lblUsuario.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblUsuario.setForeground(new java.awt.Color(204, 204, 204));
-        lblUsuario.setText("* Usuario");
-        getContentPane().add(lblUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 190, -1, -1));
+        lblUsuario.setText("*Usuario:");
+        getContentPane().add(lblUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 240, -1, -1));
 
+        lblSenha.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblSenha.setForeground(new java.awt.Color(204, 204, 204));
-        lblSenha.setText("* Senha");
-        getContentPane().add(lblSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 260, -1, -1));
+        lblSenha.setText("*Senha:");
+        getContentPane().add(lblSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 290, -1, -1));
 
+        lblCargo.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblCargo.setForeground(new java.awt.Color(204, 204, 204));
-        lblCargo.setText("* Cargo");
-        getContentPane().add(lblCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 260, -1, -1));
+        lblCargo.setText("*Cargo:");
+        getContentPane().add(lblCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 290, -1, -1));
 
         btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/iconeAdicionar-removebg-preview.png"))); // NOI18N
         btnAdicionar.setToolTipText("Adicionar");
@@ -203,18 +214,7 @@ public class cadUsuarios extends javax.swing.JFrame {
                 btnAdicionarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAdicionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 330, -1, -1));
-
-        btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/iconePesquisa-removebg-preview (1).png"))); // NOI18N
-        btnPesquisar.setToolTipText("Pesquisar");
-        btnPesquisar.setContentAreaFilled(false);
-        btnPesquisar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPesquisarActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnPesquisar, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 330, -1, -1));
+        getContentPane().add(btnAdicionar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 380, -1, -1));
 
         btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/iconeEditar-removebg-preview.png"))); // NOI18N
         btnEditar.setToolTipText("Editar");
@@ -226,7 +226,7 @@ public class cadUsuarios extends javax.swing.JFrame {
                 btnEditarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 330, -1, -1));
+        getContentPane().add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 380, -1, -1));
 
         btnRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/iconeRemover-removebg-preview.png"))); // NOI18N
         btnRemover.setToolTipText("Remover");
@@ -238,16 +238,7 @@ public class cadUsuarios extends javax.swing.JFrame {
                 btnRemoverActionPerformed(evt);
             }
         });
-        getContentPane().add(btnRemover, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 330, -1, -1));
-
-        btnLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/Logo_200x164.png"))); // NOI18N
-        btnLogo.setContentAreaFilled(false);
-        btnLogo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLogoActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 0, -1, -1));
+        getContentPane().add(btnRemover, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 380, -1, -1));
 
         btnRestaurar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/iconeRestart-removebg-preview.png"))); // NOI18N
         btnRestaurar.setToolTipText("Restaurar");
@@ -258,37 +249,65 @@ public class cadUsuarios extends javax.swing.JFrame {
                 btnRestaurarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnRestaurar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 330, -1, -1));
+        getContentPane().add(btnRestaurar, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 380, -1, -1));
 
         tbId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tbIdActionPerformed(evt);
             }
         });
-        getContentPane().add(tbId, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 40, 120, -1));
+        getContentPane().add(tbId, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, 120, -1));
 
         tbUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tbUsuarioActionPerformed(evt);
             }
         });
-        getContentPane().add(tbUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 600, -1));
+        getContentPane().add(tbUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 240, 380, -1));
 
         tbSenha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tbSenhaActionPerformed(evt);
             }
         });
-        getContentPane().add(tbSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 300, -1));
+        getContentPane().add(tbSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 290, 120, -1));
 
-        tbCargo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tbCargoActionPerformed(evt);
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 290, 210, -1));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        });
-        getContentPane().add(tbCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 260, 200, -1));
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
-        lblFundo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/fundoTelaCadastro.png"))); // NOI18N
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, 800, 140));
+
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel1.setText("*Campos Obrigatorios");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 20, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel2.setText("Telefone:");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 290, -1, -1));
+        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 290, 200, -1));
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel3.setText("E-mail:");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 240, -1, -1));
+        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 240, 250, -1));
+
+        lblFundo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/legnu/icons/Fundo=960x500.png"))); // NOI18N
         getContentPane().add(lblFundo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pack();
@@ -306,10 +325,6 @@ public class cadUsuarios extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tbSenhaActionPerformed
 
-    private void tbCargoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbCargoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tbCargoActionPerformed
-
     private void tbIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbIdActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tbIdActionPerformed
@@ -318,10 +333,6 @@ public class cadUsuarios extends javax.swing.JFrame {
         alterar();
     }//GEN-LAST:event_btnEditarActionPerformed
 
-    private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        consultar();
-    }//GEN-LAST:event_btnPesquisarActionPerformed
-
     private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
         remover();
     }//GEN-LAST:event_btnRemoverActionPerformed
@@ -329,10 +340,6 @@ public class cadUsuarios extends javax.swing.JFrame {
     private void btnRestaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaurarActionPerformed
         limpar();
     }//GEN-LAST:event_btnRestaurarActionPerformed
-
-    private void btnLogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoActionPerformed
-        sobre();
-    }//GEN-LAST:event_btnLogoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -372,16 +379,21 @@ public class cadUsuarios extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnLogo;
-    private javax.swing.JButton btnPesquisar;
     private javax.swing.JButton btnRemover;
     private javax.swing.JButton btnRestaurar;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JLabel lblCargo;
     private javax.swing.JLabel lblFundo;
     private javax.swing.JLabel lblId;
     private javax.swing.JLabel lblSenha;
     private javax.swing.JLabel lblUsuario;
-    private javax.swing.JTextField tbCargo;
     private javax.swing.JTextField tbId;
     private javax.swing.JTextField tbSenha;
     private javax.swing.JTextField tbUsuario;
