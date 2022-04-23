@@ -71,7 +71,7 @@ public class cadUsuarios extends javax.swing.JFrame {
           
     
     private void adicionar() {
-        String sql = "insert into tbusuarios(iduser,cargo,login,senha)values(?,?,?,?)";
+        String sql = "insert into tbusuarios(id,login,senha,cargo)values(?,?,?,?)";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, tbId.getText());

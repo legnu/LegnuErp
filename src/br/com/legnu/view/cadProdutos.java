@@ -9,35 +9,31 @@ import java.awt.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import net.proteanit.sql.DbUtils;
 
-/**
- *
- * @author Ad3ln0r
- */
-public class cadProdutos extends javax.swing.JFrame {
-    
-    
+public class cadProdutos extends javax.swing.JFrame {  
     
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
 
-    /**
-     * Creates new form cadProdutos
-     */
     public cadProdutos() {
         initComponents();
         conexao = ModuloConexao.conector();
         
+    }  
+    
+    public void instanciarDecimal(){
+        
     }
     
-   
     public void InstanciarCombobox(){
         try {
-            cbCategoria.addItem("SELECIONE");
+            cbCategoria.addItem(" ");
             String sql = "select categoria from categorias";
             pst = conexao.prepareStatement(sql);
             rs = pst.executeQuery();
@@ -47,38 +43,53 @@ public class cadProdutos extends javax.swing.JFrame {
         } catch (Exception sqlEx) {
         
         }
-    }
-      
-    
+    }    
     
     public void Categorias(){
         telaCategoria categoria = new telaCategoria();
         categoria.setVisible(true);
     }
     
+    public void instanciarTabela(){
+        String sql = "select idproduto as ID, codigo as Codigo, produto as Produto, custo as Custo, preco as Preço, categoria as Categoria, fornecedor as Fornecedor, obs as Observações from tbprodutos";
+        try {
+            pst = conexao.prepareStatement(sql);
+            rs = pst.executeQuery();
+            tbProdutos.setModel(DbUtils.resultSetToTableModel(rs));  
+             } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     private void limpar() {
+        instanciarTabela();
+        cbCategoria.removeAllItems();        
         txtId.setText(null);
         txtCodigoDeBarras.setText(null);
         txtCusto.setText(null);
         txtDescricao.setText(null);
         txtPesquisa.setText(null);
         txtPrecoVenda.setText(null);
+        txtFornecedor.setText(null);
+        taOBS.setText(null);
         btnAdicionar.setEnabled(true);
         btnAtualizar.setEnabled(true);
         btnCategoria.setEnabled(true);
         btnEditar.setEnabled(false);
         btnRemover.setEnabled(false);
+        InstanciarCombobox();
                 
     }
     
     private void pesquisar_cliente() {
-        String sql = "select * from tbprodutos where produto like ?";
+        String sql = "select idproduto as ID, codigo as Codigo, produto as Produto, custo as Custo, preco as Preço, categoria as Categoria, fornecedor as Fornecedor, obs as Observações from tbprodutos where produto like ?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtPesquisa.getText() + "%");
             rs = pst.executeQuery();
             //A Linha Abaixo usa a Biblioteca rs2xml para preencher a tabela
-            tbProdutos.setModel(DbUtils.resultSetToTableModel(rs));
+           
+            tbProdutos.setModel(DbUtils.resultSetToTableModel(rs));            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -86,62 +97,63 @@ public class cadProdutos extends javax.swing.JFrame {
     
     public void setar_campos() {
         int setar = tbProdutos.getSelectedRow();
-        txtCodigoDeBarras.setText(tbProdutos.getModel().getValueAt(setar, 2).toString());
-        txtCusto.setText(tbProdutos.getModel().getValueAt(setar, 4).toString());
-        txtDescricao.setText(tbProdutos.getModel().getValueAt(setar, 3).toString());
-        txtId.setText(tbProdutos.getModel().getValueAt(setar, 1).toString());
-        txtFornecedor.setText(tbProdutos.getModel().getValueAt(setar, 6).toString());
-        taOBS.setText(tbProdutos.getModel().getValueAt(setar, 7).toString());
-        txtPrecoVenda.setText(tbProdutos.getModel().getValueAt(setar, 5).toString());
+        DecimalFormat df = new DecimalFormat();
+        txtId.setText(tbProdutos.getModel().getValueAt(setar, 0).toString());
+        txtCodigoDeBarras.setText(tbProdutos.getModel().getValueAt(setar, 1).toString());
+        txtDescricao.setText(tbProdutos.getModel().getValueAt(setar, 2).toString());
+        txtCusto.setText(tbProdutos.getModel().getValueAt(setar, 3).toString());
+        txtPrecoVenda.setText(tbProdutos.getModel().getValueAt(setar, 4).toString());
         
-        
+        if(cbCategoria.getSelectedItem().toString() != null){
+            cbCategoria.setSelectedItem(tbProdutos.getModel().getValueAt(setar, 5).toString());
+        }
        
-      
+        txtFornecedor.setText(tbProdutos.getModel().getValueAt(setar, 6).toString());        
+        taOBS.setText(tbProdutos.getModel().getValueAt(setar, 7).toString());     
+        
+        if(cbCategoria.getSelectedItem() == " "){
+            
+                String sql = "update tbprodutos set categoria=? where idproduto=?";
+             try {
+                 pst = conexao.prepareStatement(sql);
+                 pst.setString(1, " ");
+                 pst.setString(2, txtId.getText());
+
+                 if ((txtDescricao.getText().isEmpty()) || (txtCusto.getText().isEmpty()) || (txtPrecoVenda.getText().isEmpty())) {
+                     JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatorios");
+                 } else {
+                    pst.executeUpdate();      
+                    instanciarTabela();
+                    
+                 }
+             } catch (Exception e) {
+                 JOptionPane.showMessageDialog(null, e);
+             }
+        }
+        
         //A Linha Abaixo desabilita o botão adicionar
+        txtPesquisa.setText(null);
         btnAdicionar.setEnabled(false);
         btnEditar.setEnabled(true);
         btnRemover.setEnabled(true);
-    }
-    
-    private void consultar() {
-        String sql = "select * from tbprodutos where produto=?";
-        try {
-            pst = conexao.prepareStatement(sql);
-            pst.setString(1, txtPesquisa.getText());
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                txtCodigoDeBarras.setText(rs.getString(2));
-                txtCusto.setText(rs.getString(4));
-                txtDescricao.setText(rs.getString(3));
-                txtPrecoVenda.setText(rs.getString(5));
-                taOBS.setText(rs.getString(7));
-                     
-             
-                btnRemover.setEnabled(true);
-                btnEditar.setEnabled(true);
-                btnAdicionar.setEnabled(false);
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "Produto não cadastrado");
-                limpar();               
-            }          
-           
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }    
-    
+    }  
+     
     private void adicionar() {
-        String sql = "insert into tbprodutos(idproduto,codigo,produto,custo,preco,categoria,obs)values(?,?,?,?,?,?,?,?)";
+        String sql = "insert into tbprodutos(codigo,produto,custo,preco,categoria,fornecedor,obs)values(?,?,?,?,?,?,?)";
+        
+        double custo,preco;
+     
+        custo = Double.parseDouble(txtCusto.getText());
+        preco = Double.parseDouble(txtPrecoVenda.getText());      
+        
         try {
             pst = conexao.prepareStatement(sql);
-            pst.setString(0, txtId.getText());
+            
             pst.setString(1, txtCodigoDeBarras.getText());
             pst.setString(2, txtDescricao.getText());
-            pst.setString(3, txtCusto.getText());
-            pst.setString(4, txtPrecoVenda.getText());
-            pst.setString(5, cbCategoria.getItemAt(WIDTH));
+            pst.setString(3, new DecimalFormat("#,##0.00").format(custo));
+            pst.setString(4, new DecimalFormat("#,##0.00").format(preco));
+            pst.setString(5, cbCategoria.getSelectedItem().toString());
             pst.setString(6, txtFornecedor.getText());
             pst.setString(7, taOBS.getText());
 
@@ -165,16 +177,17 @@ public class cadProdutos extends javax.swing.JFrame {
     }
 
     private void alterar() {
-        String sql = "update tbprodutos set codigo=?,produto=?,custo=?,preco=?,categoria=?,obs=? where idpro=?";
+        String sql = "update tbprodutos set codigo=?,produto=?,custo=?,preco=?,categoria=?,fornecedor=?,obs=? where idproduto=?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtCodigoDeBarras.getText());
             pst.setString(2, txtDescricao.getText());
             pst.setString(3, txtCusto.getText());
             pst.setString(4, txtPrecoVenda.getText());
-            pst.setString(5, cbCategoria.getName());
-            pst.setString(6, taOBS.getText());
-            pst.setString(7, txtId.getText());
+            pst.setString(5, cbCategoria.getSelectedItem().toString());
+            pst.setString(6, txtFornecedor.getText());
+            pst.setString(7, taOBS.getText());
+            pst.setString(8, txtId.getText());
 
             if ((txtDescricao.getText().isEmpty()) || (txtCusto.getText().isEmpty()) || (txtPrecoVenda.getText().isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatorios");
@@ -199,7 +212,7 @@ public class cadProdutos extends javax.swing.JFrame {
     private void remover() {
         int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja remover este usuário?", "Atenção", JOptionPane.YES_NO_OPTION);
         if (confirma == JOptionPane.YES_OPTION) {
-            String sql = "delete from tbprodutos where idpro=?";
+            String sql = "delete from tbprodutos where idproduto=?";
             try {
                 pst = conexao.prepareStatement(sql);
                 pst.setString(1, txtId.getText());
@@ -207,6 +220,8 @@ public class cadProdutos extends javax.swing.JFrame {
                 if (apagado > 0) {
                     JOptionPane.showMessageDialog(null, "Produto removido com sucesso");
                     limpar();
+                    tirarId();
+                    criarId();
                     
                     
                 }
@@ -216,11 +231,32 @@ public class cadProdutos extends javax.swing.JFrame {
         }
     }
     
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    private void tirarId() {
+        
+            String sql = "alter table tbprodutos drop idproduto";
+            try {
+                pst = conexao.prepareStatement(sql);                
+                pst.executeUpdate();
+               
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+            
+            
+        
+    }
+    
+    private void criarId(){
+        String sql = "alter table tbprodutos add idproduto MEDIUMINT NOT NULL AUTO_INCREMENT Primary key";
+            try {
+                pst = conexao.prepareStatement(sql);                
+                pst.executeUpdate();
+               
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+    } 
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -255,6 +291,7 @@ public class cadProdutos extends javax.swing.JFrame {
         Fundo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cadastro de Produtos");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
@@ -314,6 +351,7 @@ public class cadProdutos extends javax.swing.JFrame {
         });
         getContentPane().add(txtPrecoVenda, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 310, 80, -1));
 
+        txtId.setEnabled(false);
         txtId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIdActionPerformed(evt);
@@ -407,17 +445,24 @@ public class cadProdutos extends javax.swing.JFrame {
         });
         getContentPane().add(cbCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 310, 300, -1));
 
+        tbProdutos = new javax.swing.JTable(){
+            public boolean isCellEditable(int rowIndex, int colIndex){
+                return false;
+            }
+        };
         tbProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Codigo", "Produto", "Custo", "Preço", "Categoria", "Fornecedor", "Observações"
             }
         ));
+        tbProdutos.setFocusable(false);
+        tbProdutos.getTableHeader().setReorderingAllowed(false);
         tbProdutos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbProdutosMouseClicked(evt);
@@ -461,7 +506,9 @@ public class cadProdutos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCodigoDeBarrasActionPerformed
 
     private void cbCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbCategoriaActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:limpar();
+        
+       
     }//GEN-LAST:event_cbCategoriaActionPerformed
 
     private void txtPrecoVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecoVendaActionPerformed
@@ -470,6 +517,7 @@ public class cadProdutos extends javax.swing.JFrame {
 
     private void btnCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriaActionPerformed
         // TODO add your handling code here:
+        
         Categorias();
     }//GEN-LAST:event_btnCategoriaActionPerformed
 
@@ -509,12 +557,10 @@ public class cadProdutos extends javax.swing.JFrame {
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         // TODO add your handling code here:
-        InstanciarCombobox();
+        limpar();
+        
     }//GEN-LAST:event_formWindowActivated
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

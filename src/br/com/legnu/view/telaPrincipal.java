@@ -35,6 +35,11 @@ public class telaPrincipal extends javax.swing.JFrame {
         cadClientes clientes = new cadClientes();
         clientes.setVisible(true);
     }
+    
+    public void CadastroHorarios(){
+        cadHorarios horario = new cadHorarios();
+        horario.setVisible(true);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -266,6 +271,11 @@ public class telaPrincipal extends javax.swing.JFrame {
         menCadastro.add(menCadastroServicos);
 
         menCadastroHorarios.setText("Horarios");
+        menCadastroHorarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menCadastroHorariosActionPerformed(evt);
+            }
+        });
         menCadastro.add(menCadastroHorarios);
 
         jMenuBar1.add(menCadastro);
@@ -326,6 +336,11 @@ public class telaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         CadastroServicos();
     }//GEN-LAST:event_menCadastroServicosActionPerformed
+
+    private void menCadastroHorariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menCadastroHorariosActionPerformed
+        // TODO add your handling code here:
+        CadastroHorarios();
+    }//GEN-LAST:event_menCadastroHorariosActionPerformed
 
     /**
      * @param args the command line arguments
